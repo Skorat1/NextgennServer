@@ -5,7 +5,7 @@ import { Category } from '../models/Category.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CATEGORY_UPLOADS_DIR = path.resolve(__dirname, '../uploads/categories');
+const CATEGORY_UPLOADS_DIR = path.resolve(__dirname, '../../uploads/categories');
 
 export async function getCategories(req, res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

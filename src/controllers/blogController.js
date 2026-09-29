@@ -5,7 +5,7 @@ import { BlogPost } from '../models/BlogPost.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const UPLOADS_DIR = path.resolve(__dirname, '../uploads/blog');
+const UPLOADS_DIR = path.resolve(__dirname, '../../uploads/blog');
 
 function setNoCacheHeaders(res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
