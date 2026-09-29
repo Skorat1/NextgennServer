@@ -1,0 +1,21 @@
+{
+  "name": "nextgenn-backend",
+  "version": "1.0.0",
+  "description": "Backend REST API with MySQL database for NextGenn",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "echo Backend build complete",
+    "db:clean": "node scripts/clean_games.js",
+    "db:reset-plays": "node scripts/reset_plays.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.7.0",
+    "mysql": "^2.18.1"
+  }
+}
