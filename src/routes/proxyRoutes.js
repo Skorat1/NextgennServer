@@ -32,6 +32,42 @@ router.get(['/*', ''], async (req, res, next) => {
     res.removeHeader('X-Frame-Options');
     res.removeHeader('Content-Security-Policy');
 
+    if (contentType.includes('text/html')) {
+      let html = await response.text();
+      const autoFitStyle = `
+<style id="nextgenn-fullscreen-fit">
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #000000 !important;
+}
+canvas, #canvas, #game, #gameCanvas, #game-canvas, #c2canvas, #unity-canvas, .webgl-content, #unityContainer {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+</style>
+`;
+      if (html.includes('</head>')) {
+        html = html.replace('</head>', `${autoFitStyle}</head>`);
+      } else if (html.includes('</body>')) {
+        html = html.replace('</body>', `${autoFitStyle}</body>`);
+      } else {
+        html = autoFitStyle + html;
+      }
+      res.send(html);
+      return;
+    }
+
     const buffer = await response.arrayBuffer();
     res.send(Buffer.from(buffer));
   } catch (err) {

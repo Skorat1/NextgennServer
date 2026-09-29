@@ -128,32 +128,49 @@ export async function updateUser(req, res) {
  */
 export async function syncCloudProgress(req, res) {
   try {
-    const userId = req.user ? req.user.id : req.body.userId;
+    const userId = req.user ? req.user.id : (req.body.userId || 'guest_player');
     if (!userId) {
-      return res.status(401).json({ error: 'Authentication required for cloud save' });
+      return res.status(400).json({ error: 'User ID is required for cloud save' });
     }
 
-    const { favorites, recent, highScores, totalXp, level, unlockedBadges, questProgress } = req.body;
+    const { favorites, recent, highScores, totalXp, level, unlockedBadges, questProgress, votes } = req.body;
     const progressData = {
       favorites: Array.isArray(favorites) ? favorites : [],
       recent: Array.isArray(recent) ? recent : [],
-      highScores: highScores || {},
+      highScores: highScores && typeof highScores === 'object' ? highScores : {},
       totalXp: Number(totalXp) || 0,
       level: Number(level) || 1,
-      unlockedBadges: Array.isArray(unlockedBadges) ? unlockedBadges : [],
-      questProgress: questProgress || {},
+      unlockedBadges: Array.isArray(unlockedBadges) ? unlockedBadges : ['first_play'],
+      questProgress: questProgress && typeof questProgress === 'object' ? questProgress : {},
+      votes: votes && typeof votes === 'object' ? votes : {},
       lastSyncedAt: new Date().toISOString()
     };
 
-    await User.findOneAndUpdate(
-      { id: userId },
-      { $set: { cloudSave: progressData } }
-    );
+    let user = await User.findOne({
+      $or: [{ id: userId }, { _id: userId }]
+    });
+
+    if (!user) {
+      await User.create({
+        id: userId,
+        username: req.body.username || (userId.startsWith('guest') ? 'Player' : userId),
+        email: `${userId}@nextgenn.local`,
+        role: 'player',
+        status: 'active',
+        cloudSave: progressData
+      });
+    } else {
+      await User.findOneAndUpdate(
+        { id: user.id || userId },
+        { $set: { cloudSave: progressData } },
+        { upsert: true }
+      );
+    }
 
     return res.json({ success: true, cloudSave: progressData });
   } catch (err) {
     console.error('Cloud sync error:', err);
-    return res.status(500).json({ error: 'Failed to sync cloud progress' });
+    return res.status(500).json({ error: 'Failed to sync cloud progress to MySQL' });
   }
 }
 
@@ -161,30 +178,29 @@ export async function getCloudProgress(req, res) {
   try {
     const userId = req.user ? req.user.id : req.params.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      return res.status(400).json({ error: 'User ID is required' });
     }
 
     const user = await User.findOne({
       $or: [{ id: userId }, { _id: userId }]
     });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    const defaultSave = {
+      favorites: [],
+      recent: [],
+      highScores: {},
+      totalXp: 150,
+      level: 1,
+      unlockedBadges: ['first_play'],
+      questProgress: {},
+      votes: {}
+    };
 
     return res.json({
       success: true,
-      cloudSave: user.cloudSave || {
-        favorites: [],
-        recent: [],
-        highScores: {},
-        totalXp: 0,
-        level: 1,
-        unlockedBadges: [],
-        questProgress: {}
-      }
+      cloudSave: (user && user.cloudSave) ? { ...defaultSave, ...user.cloudSave } : defaultSave
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to get cloud progress' });
+    return res.status(500).json({ error: 'Failed to get cloud progress from MySQL' });
   }
 }

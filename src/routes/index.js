@@ -10,6 +10,7 @@ import fairRoutes from './fairRoutes.js';
 import analyticsRoutes from './analyticsRoutes.js';
 import gamificationRoutes from './gamificationRoutes.js';
 import blogRoutes from './blogRoutes.js';
+import leaderboardRoutes from './leaderboardRoutes.js';
 import { getHealth, getOnlineStats } from '../controllers/analyticsController.js';
 
 const router = Router();
@@ -32,5 +33,6 @@ router.use('/provably-fair', fairRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/gamification', gamificationRoutes);
 router.use('/blog', blogRoutes);
+router.use('/leaderboard', leaderboardRoutes);
 
 export default router;

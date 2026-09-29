@@ -13,6 +13,13 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import apiRoutes from './routes/index.js';
 import proxyRoutes from './routes/proxyRoutes.js';
+import { 
+  generateSitemapXml, 
+  generateSubSitemapXml, 
+  generateSitemapXsl, 
+  generateRobotsTxt 
+} from './controllers/sitemapController.js';
+import { handleGamePrerender } from './middleware/crawlerPrerender.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +36,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static uploads serving (blog images, banners, etc.)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// Dynamic SEO Sitemap and Robots.txt for Search Engines
+app.get('/sitemap.xml', generateSitemapXml);
+app.get('/sitemap.xsl', generateSitemapXsl);
+app.get('/sitemap-:type.xml', generateSubSitemapXml);
+app.get('/api/sitemap.xml', generateSitemapXml);
+app.get('/robots.txt', generateRobotsTxt);
+
+// Social Bots & Crawler Pre-rendering (WhatsApp, Facebook, Twitter, Googlebot)
+app.get('/game/:id', handleGamePrerender);
 
 // Root Route & Health Check
 app.get('/', (req, res) => {
@@ -102,3 +119,4 @@ process.on('uncaughtException', (err) => {
 });
 
 startServer();
+// NextGenn API Server - Blog Game Link Support Ready

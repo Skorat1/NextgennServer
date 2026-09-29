@@ -149,11 +149,49 @@ export async function createTables() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `;
 
+  const blogPostsTable = `
+    CREATE TABLE IF NOT EXISTS blog_posts (
+      id VARCHAR(100) PRIMARY KEY,
+      title VARCHAR(500) NOT NULL,
+      excerpt TEXT,
+      content LONGTEXT,
+      category VARCHAR(100) DEFAULT 'General',
+      author VARCHAR(200) DEFAULT 'NextGenn Editorial',
+      tags LONGTEXT,
+      gradient VARCHAR(200) DEFAULT 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      image LONGTEXT,
+      emoji VARCHAR(10) DEFAULT '🎮',
+      gameUrl VARCHAR(500) DEFAULT '',
+      gameTitle VARCHAR(255) DEFAULT '',
+      published TINYINT(1) DEFAULT 1,
+      featured TINYINT(1) DEFAULT 0,
+      views INT DEFAULT 0,
+      readTime VARCHAR(50) DEFAULT '3 min read',
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `;
+
+  const gameScoresTable = `
+    CREATE TABLE IF NOT EXISTS game_scores (
+      id VARCHAR(100) PRIMARY KEY,
+      gameId VARCHAR(100) NOT NULL,
+      userId VARCHAR(100),
+      username VARCHAR(100) NOT NULL,
+      score INT NOT NULL DEFAULT 0,
+      period VARCHAR(20) DEFAULT 'all',
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_game_score (gameId, score DESC)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `;
+
   await query(gamesTable);
   await query(categoriesTable);
   await query(usersTable);
   await query(submissionsTable);
   await query(messagesTable);
+  await query(blogPostsTable);
+  await query(gameScoresTable);
 
   try {
     await query('ALTER TABLE users ADD COLUMN cloudSave JSON');
@@ -188,6 +226,26 @@ export async function createTables() {
 
   try {
     await query("UPDATE categories SET name = 'Adventure' WHERE (id = 'adventure' OR name = 'adventure') AND name != 'Adventure'");
+  } catch (e) { }
+
+  try {
+    await query('ALTER TABLE blog_posts ADD COLUMN image LONGTEXT');
+  } catch (e) { }
+
+  try {
+    await query('ALTER TABLE blog_posts ADD COLUMN category VARCHAR(100) DEFAULT "General"');
+  } catch (e) { }
+
+  try {
+    await query('ALTER TABLE blog_posts ADD COLUMN gameUrl VARCHAR(500) DEFAULT ""');
+  } catch (e) { }
+
+  try {
+    await query('ALTER TABLE blog_posts ADD COLUMN gameTitle VARCHAR(255) DEFAULT ""');
+  } catch (e) { }
+
+  try {
+    await query("UPDATE blog_posts SET gameUrl = 'https://html5.gamemonetize.co/mb8kyh2eioqmmh42g3tw8tkk98yl6h7y/', gameTitle = 'Need for Race' WHERE id LIKE '%need-for-race%' AND (gameUrl = '' OR gameUrl IS NULL)");
   } catch (e) { }
 
   try {

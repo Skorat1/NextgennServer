@@ -87,8 +87,12 @@ export const Game = {
 
     const rawId = filter.id || (filter.$or && (filter.$or[0]?.id || filter.$or[1]?._id));
     if (rawId) {
-      sql += ' AND id = ?';
-      params.push(rawId);
+      const cleanRaw = String(rawId).trim();
+      const slugNormalized = cleanRaw.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      const spaceTitle = slugNormalized.replace(/-/g, ' ');
+
+      sql += ' AND (id = ? OR LOWER(title) = ? OR LOWER(REPLACE(REPLACE(title, "-", " "), "  ", " ")) = ? OR LOWER(REPLACE(title, " ", "-")) = ?)';
+      params.push(cleanRaw, cleanRaw.toLowerCase(), spaceTitle, slugNormalized);
     } else {
       for (const [key, val] of Object.entries(filter)) {
         if (key !== '$or' && val !== undefined) {
@@ -100,7 +104,18 @@ export const Game = {
 
     sql += ' LIMIT 1';
     const rows = await query(sql, params);
-    return rows.length > 0 ? formatGame(rows[0]) : null;
+    if (rows.length > 0) return formatGame(rows[0]);
+
+    // Fallback: search by partial title match
+    if (rawId && typeof rawId === 'string' && rawId.length > 3) {
+      const cleanSearch = String(rawId).toLowerCase().replace(/[^a-z0-9]/g, ' ').trim();
+      if (cleanSearch) {
+        const fallbackRows = await query('SELECT * FROM games WHERE LOWER(title) LIKE ? LIMIT 5', [`%${cleanSearch}%`]);
+        if (fallbackRows.length > 0) return formatGame(fallbackRows[0]);
+      }
+    }
+
+    return null;
   },
 
   async create(data) {
