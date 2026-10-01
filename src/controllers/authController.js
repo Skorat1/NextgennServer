@@ -1,6 +1,10 @@
 import crypto from 'crypto';
 import { User } from '../models/User.js';
+<<<<<<< HEAD
 import { signToken, verifyToken, hashPassword, verifyPassword } from '../utils/crypto.js';
+=======
+import { signToken, verifyToken } from '../utils/crypto.js';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 import { sanitizeUser } from '../utils/sanitize.js';
 
 const passkeyChallenges = new Map();
@@ -141,6 +145,7 @@ export async function socialLogin(req, res) {
 // Get current user profile
 export async function getMe(req, res) {
   try {
+<<<<<<< HEAD
     let userId = null;
 
     // Verify Authorization token
@@ -155,11 +160,25 @@ export async function getMe(req, res) {
         if (decoded && decoded.id) {
           userId = decoded.id;
         }
+=======
+    let userId = req.headers['x-user-id'] || req.query.userId;
+
+    // Check Bearer Token if userId not directly provided
+    if (!userId && req.headers.authorization) {
+      const token = req.headers.authorization.replace(/^Bearer\s+/i, '');
+      const decoded = verifyToken(token);
+      if (decoded && decoded.id) {
+        userId = decoded.id;
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       }
     }
 
     if (!userId) {
+<<<<<<< HEAD
       return res.status(401).json({ error: 'Unauthorized: Valid session token required' });
+=======
+      return res.status(401).json({ error: 'Unauthorized' });
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     }
 
     const user = await User.findOne({
@@ -262,6 +281,7 @@ export async function loginUser(req, res) {
       return res.status(401).json({ error: 'Invalid email/username or password' });
     }
 
+<<<<<<< HEAD
     // Verify password: account must have a password set
     if (!user.password || user.password.trim() === '') {
       return res.status(400).json({
@@ -272,6 +292,14 @@ export async function loginUser(req, res) {
     const isValid = verifyPassword(loginPass, user.password);
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid password' });
+=======
+    // Verify password if user has password set
+    if (user.password) {
+      const isValid = verifyPassword(loginPass, user.password);
+      if (!isValid) {
+        return res.status(401).json({ error: 'Invalid password' });
+      }
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     }
 
     const nowIso = new Date().toISOString();

@@ -96,7 +96,11 @@ export async function uploadCategoryImage(req, res) {
     let ext = 'png';
     let base64Data = image;
 
+<<<<<<< HEAD
     const matches = image.match(/^data:([A-Za-z0-9_+\-\/]+);base64,(.+)$/);
+=======
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     if (matches && matches.length === 3) {
       const mime = matches[1].toLowerCase();
       if (mime.includes('jpeg') || mime.includes('jpg')) ext = 'jpg';

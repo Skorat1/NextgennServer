@@ -16,12 +16,19 @@ export async function loginAdmin(req, res) {
       return res.status(400).json({ error: 'Admin Email/Username and Password are required.' });
     }
 
+<<<<<<< HEAD
     // 1. Check SuperAdmin credentials from environment configuration
     const envAdminUser = (process.env.ADMIN_IDENTIFIER || process.env.ADMIN_USER || 'admin').toLowerCase();
     const envAdminPass = process.env.ADMIN_PASSWORD;
 
     const isMasterAdmin =
       Boolean(envAdminPass && loginIdent === envAdminUser && loginPass === envAdminPass);
+=======
+    // 1. Check Default SuperAdmin master credentials
+    const isMasterAdmin =
+      (loginIdent === 'admin@nextgenn.com' || loginIdent === 'superadmin' || loginIdent === 'admin') &&
+      (loginPass === 'Admin@123' || loginPass === 'admin123' || loginPass === 'admin');
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 
     // 2. Lookup in MySQL Database
     let adminUser = await User.findOne({
@@ -35,6 +42,7 @@ export async function loginAdmin(req, res) {
     if (!adminUser && isMasterAdmin) {
       adminUser = {
         id: 'usr-admin-1',
+<<<<<<< HEAD
         username: 'Admin',
         name: 'Administrator',
         email: process.env.ADMIN_EMAIL || `${loginIdent}@nextgenn.local`,
@@ -42,6 +50,15 @@ export async function loginAdmin(req, res) {
         role: 'admin',
         status: 'active',
         avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
+=======
+        username: 'SuperAdmin',
+        name: 'SuperAdmin',
+        email: 'admin@nextgenn.com',
+        password: hashPassword('Admin@123'),
+        role: 'admin',
+        status: 'active',
+        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=SuperAdmin',
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       };
@@ -52,11 +69,14 @@ export async function loginAdmin(req, res) {
       return res.status(401).json({ error: 'Invalid admin credentials.' });
     }
 
+<<<<<<< HEAD
     // Force admin role if master credentials used
     if (isMasterAdmin) {
       adminUser.role = 'admin';
     }
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     // 3. Verify admin role
     if (adminUser.role !== 'admin' && adminUser.role !== 'moderator') {
       return res.status(403).json({ error: 'Access denied: Administrator privileges required.' });

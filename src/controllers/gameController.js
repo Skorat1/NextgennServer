@@ -60,6 +60,7 @@ export async function autoEnsureCategoryExists(rawCategory, customName = '') {
   }
 }
 
+<<<<<<< HEAD
 let cachedGamesList = null;
 let cachedGamesTime = 0;
 const CACHE_TTL_MS = 6000; // 6 seconds in-memory cache
@@ -90,6 +91,19 @@ export async function getGames(req, res) {
       cachedGamesTime = Date.now();
     }
     res.json(result);
+=======
+// Get all games (Supports filters: category, featured, search, limit)
+export async function getGames(req, res) {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
+  const { category, featured, search, limit, status } = req.query;
+
+  try {
+    const gamesList = await Game.find({ category, featured, search, limit, status });
+    res.json(gamesList || []);
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -120,6 +134,7 @@ export async function createGame(req, res) {
         .replace(/[^a-z0-9]/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '') + '-' + Date.now().toString().slice(-4);
+<<<<<<< HEAD
     } else {
       gameData.id = String(gameData.id)
         .toLowerCase()
@@ -127,6 +142,8 @@ export async function createGame(req, res) {
         .replace(/[^a-z0-9-]/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     }
 
     // Auto-create category in Categories table if it does not exist
@@ -149,14 +166,20 @@ export async function createGame(req, res) {
     }
 
     const created = await Game.create(gameData);
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.status(201).json(created);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 // Update game
 export async function updateGame(req, res) {
   try {
@@ -194,7 +217,10 @@ export async function updateGame(req, res) {
       { new: true, upsert: true }
     );
 
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json(updated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -210,7 +236,10 @@ export async function deleteGame(req, res) {
     }
 
     await Game.deleteMany({ id: rawId });
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json({ success: true, message: 'Game deleted successfully', id: rawId });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -221,7 +250,10 @@ export async function deleteGame(req, res) {
 export async function deleteAllGames(req, res) {
   try {
     await Game.deleteMany({});
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json({ success: true, message: 'All games deleted from database' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -242,7 +274,10 @@ export async function toggleFeatured(req, res) {
       { new: true }
     );
 
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -253,13 +288,24 @@ export async function toggleFeatured(req, res) {
 export async function recordPlay(req, res) {
   try {
     const rawId = req.params.id;
+<<<<<<< HEAD
     const updated = await Game.findOneAndUpdate(
+=======
+    const existing = await Game.findOne({ id: rawId });
+    const currentPlays = (existing?.plays || 0) + 1;
+
+    await Game.findOneAndUpdate(
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       { id: rawId },
       { $inc: { plays: 1 } },
       { new: true }
     );
 
+<<<<<<< HEAD
     res.json({ success: true, id: rawId, plays: updated?.plays || 1 });
+=======
+    res.json({ success: true, id: rawId, plays: currentPlays });
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -305,7 +351,11 @@ export async function voteGame(req, res) {
     res.json({
       success: true,
       game: updatedGame,
+<<<<<<< HEAD
       id: updatedGame?.id || gameId,
+=======
+      id: updatedGame.id,
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       likes,
       dislikes,
       rating,
@@ -340,7 +390,10 @@ export async function detectMetadata(req, res) {
 export async function draftAllGames(req, res) {
   try {
     const result = await Game.setAllDraft();
+<<<<<<< HEAD
     invalidateGamesCache();
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json({
       success: true,
       message: 'All games set to draft status',
@@ -352,6 +405,7 @@ export async function draftAllGames(req, res) {
   }
 }
 
+<<<<<<< HEAD
 // Set all games to active status (Publish All)
 export async function activateAllGames(req, res) {
   try {
@@ -368,6 +422,8 @@ export async function activateAllGames(req, res) {
   }
 }
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 // Helper: Calculate suggested tile size (Automatic Masonry Gallery)
 function calculateSuggestedTileSize(w, h) {
   // In the automatic Masonry Gallery concept, all games default to 'auto'
@@ -523,8 +579,11 @@ export async function importGameMonetizeGames(req, res) {
       imported.push(saved);
     }
 
+<<<<<<< HEAD
     invalidateGamesCache();
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.json({
       success: true,
       message: `Successfully imported ${imported.length} games into catalog`,

@@ -47,10 +47,15 @@ export const Category = {
     const setClauses = [];
     const params = [];
 
+<<<<<<< HEAD
     const allowedColumns = new Set(['name', 'icon', 'image', 'color']);
 
     for (const [key, val] of Object.entries(data)) {
       if (key !== 'id' && key !== '_id' && key !== '__v' && allowedColumns.has(key)) {
+=======
+    for (const [key, val] of Object.entries(data)) {
+      if (key !== 'id') {
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
         setClauses.push(`\`${key}\` = ?`);
         params.push(val);
       }

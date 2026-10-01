@@ -1,5 +1,9 @@
 import { User } from '../models/User.js';
+<<<<<<< HEAD
 import { hashPassword, signToken, verifyToken } from '../utils/crypto.js';
+=======
+import { hashPassword, signToken } from '../utils/crypto.js';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 import { sanitizeUser } from '../utils/sanitize.js';
 
 export async function getUsers(req, res) {
@@ -103,6 +107,7 @@ export async function updateUser(req, res) {
   try {
     const rawId = req.params.id;
     const updates = { ...req.body };
+<<<<<<< HEAD
 
     // Prevent non-admin users from escalating role or status
     const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'moderator');
@@ -111,6 +116,8 @@ export async function updateUser(req, res) {
       delete updates.status;
     }
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     if (updates.password && updates.password.trim()) {
       updates.password = hashPassword(updates.password.trim());
     } else {
@@ -136,6 +143,7 @@ export async function updateUser(req, res) {
  */
 export async function syncCloudProgress(req, res) {
   try {
+<<<<<<< HEAD
     let authUser = req.user;
     if (!authUser && (req.headers.authorization || req.headers['x-access-token'])) {
       const token = (req.headers.authorization || req.headers['x-access-token']).replace(/^Bearer\s+/i, '').trim();
@@ -155,11 +163,31 @@ export async function syncCloudProgress(req, res) {
     }
 
     const { favorites, recent, highScores, totalXp, level, unlockedBadges, questProgress, votes } = req.body;
+=======
+    const userId = req.user ? req.user.id : (req.body.userId || 'guest_player');
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required for cloud save' });
+    }
+
+    const { favorites, recent, highScores, totalXp, level, unlockedBadges, questProgress, votes } = req.body;
+    const progressData = {
+      favorites: Array.isArray(favorites) ? favorites : [],
+      recent: Array.isArray(recent) ? recent : [],
+      highScores: highScores && typeof highScores === 'object' ? highScores : {},
+      totalXp: Number(totalXp) || 0,
+      level: Number(level) || 1,
+      unlockedBadges: Array.isArray(unlockedBadges) ? unlockedBadges : ['first_play'],
+      questProgress: questProgress && typeof questProgress === 'object' ? questProgress : {},
+      votes: votes && typeof votes === 'object' ? votes : {},
+      lastSyncedAt: new Date().toISOString()
+    };
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 
     let user = await User.findOne({
       $or: [{ id: userId }, { _id: userId }]
     });
 
+<<<<<<< HEAD
     const existingSave = (user && user.cloudSave && typeof user.cloudSave === 'object') ? user.cloudSave : {};
 
     // Carefully merge so partial syncs (e.g. only favorites or only recent) do NOT wipe out other data!
@@ -175,6 +203,8 @@ export async function syncCloudProgress(req, res) {
       lastSyncedAt: new Date().toISOString()
     };
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     if (!user) {
       await User.create({
         id: userId,

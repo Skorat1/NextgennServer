@@ -13,7 +13,11 @@ async function setAllDraft() {
   const host = process.env.MYSQL_HOST || 'localhost';
   const user = process.env.MYSQL_USER || 'root';
   const password = process.env.MYSQL_PASSWORD || '';
+<<<<<<< HEAD
   const database = process.env.MYSQL_DATABASE || 'thopgames';
+=======
+  const database = process.env.MYSQL_DATABASE || 'nextgenn';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   const port = Number(process.env.MYSQL_PORT) || 3306;
 
   const conn = mysql.createConnection({ host, user, password, database, port });

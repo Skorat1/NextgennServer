@@ -1,5 +1,9 @@
 import mysql from 'mysql';
 import dotenv from 'dotenv';
+<<<<<<< HEAD
+=======
+import { SEED_CATEGORIES, SEED_USERS } from '../constants/seedData.js';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 
 dotenv.config();
 
@@ -77,6 +81,7 @@ export async function createTables() {
       tileSize VARCHAR(20) DEFAULT '1x1',
       status VARCHAR(50) DEFAULT 'active',
       instructions TEXT,
+<<<<<<< HEAD
       engine VARCHAR(100) DEFAULT 'HTML5',
       platform VARCHAR(100) DEFAULT 'Browser (Desktop, Mobile)',
       orientation VARCHAR(50) DEFAULT 'Landscape',
@@ -84,6 +89,8 @@ export async function createTables() {
       releaseDate VARCHAR(100) DEFAULT '',
       lastUpdate VARCHAR(100) DEFAULT '',
       relatedGames JSON,
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       width INT DEFAULT 800,
       height INT DEFAULT 600,
       createdAt VARCHAR(50),
@@ -113,7 +120,11 @@ export async function createTables() {
       avatar TEXT,
       provider VARCHAR(50) DEFAULT 'email',
       passkeyCredentialId VARCHAR(255),
+<<<<<<< HEAD
       role VARCHAR(50) DEFAULT 'user',
+=======
+      role VARCHAR(50) DEFAULT 'moderator',
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       status VARCHAR(50) DEFAULT 'active',
       cloudSave JSON,
       lastLogin VARCHAR(100),
@@ -178,12 +189,29 @@ export async function createTables() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `;
 
+<<<<<<< HEAD
+=======
+  const gameScoresTable = `
+    CREATE TABLE IF NOT EXISTS game_scores (
+      id VARCHAR(100) PRIMARY KEY,
+      gameId VARCHAR(100) NOT NULL,
+      userId VARCHAR(100),
+      username VARCHAR(100) NOT NULL,
+      score INT NOT NULL DEFAULT 0,
+      period VARCHAR(20) DEFAULT 'all',
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_game_score (gameId, score DESC)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `;
+
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   await query(gamesTable);
   await query(categoriesTable);
   await query(usersTable);
   await query(submissionsTable);
   await query(messagesTable);
   await query(blogPostsTable);
+<<<<<<< HEAD
 
   try {
     // Clean up legacy game_scores and banner tables
@@ -191,6 +219,9 @@ export async function createTables() {
     await query('DROP TABLE IF EXISTS banner');
     await query('DROP TABLE IF EXISTS banners');
   } catch (e) { }
+=======
+  await query(gameScoresTable);
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 
   try {
     await query('ALTER TABLE users ADD COLUMN cloudSave JSON');
@@ -211,6 +242,7 @@ export async function createTables() {
   } catch (e) { }
 
   try {
+<<<<<<< HEAD
     await query("ALTER TABLE games ADD COLUMN engine VARCHAR(100) DEFAULT 'HTML5'");
   } catch (e) { }
 
@@ -251,6 +283,8 @@ export async function createTables() {
   } catch (e) { }
 
   try {
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     // Automatic Masonry Gallery: Normalize legacy 3x2, 4x2, etc. tile sizes to 'auto'
     await query("UPDATE games SET tileSize = 'auto' WHERE tileSize IN ('3x2', '4x2', '2x3', '1x2')");
   } catch (e) { }
@@ -291,12 +325,62 @@ export async function createTables() {
     const { BlogPost } = await import('../models/BlogPost.js');
     await BlogPost.ensureTable();
   } catch (e) { }
+<<<<<<< HEAD
 
   try {
     const rows = await query("SELECT COUNT(*) as count FROM games");
     console.log(`🎮 NextGenn Games Database Ready: ${rows[0]?.count || 0} total games in catalog.`);
   } catch (e) {
     console.warn('Game status check warning:', e.message);
+=======
+}
+
+// Seed Database default records if tables are empty
+export async function seedDatabase() {
+  try {
+    // 1. Seed Categories
+    const [catCountRow] = await query('SELECT COUNT(*) AS count FROM categories');
+    if (catCountRow && Number(catCountRow.count) === 0 && SEED_CATEGORIES.length > 0) {
+      for (const c of SEED_CATEGORIES) {
+        await query(
+          `INSERT INTO categories (id, name, icon, color)
+           VALUES (?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE name = VALUES(name), icon = VALUES(icon), color = VALUES(color)`,
+          [c.id, c.name, c.icon || '🎮', c.color || '#00ffcc']
+        );
+      }
+      console.log(`✅ Seeded ${SEED_CATEGORIES.length} categories to MySQL database`);
+    }
+
+    // 2. Seed Default Users
+    const [userCountRow] = await query('SELECT COUNT(*) AS count FROM users');
+    if (userCountRow && Number(userCountRow.count) === 0 && SEED_USERS.length > 0) {
+      for (const u of SEED_USERS) {
+        await query(
+          `INSERT INTO users (id, username, name, email, password, avatar, provider, passkeyCredentialId, role, status, lastLogin, createdAt)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)`,
+          [
+            u.id,
+            u.username,
+            u.name || u.username,
+            u.email,
+            u.password || '',
+            u.avatar || '',
+            u.provider || 'email',
+            u.passkeyCredentialId || null,
+            u.role || 'moderator',
+            u.status || 'active',
+            u.lastLogin || new Date().toISOString(),
+            u.createdAt || new Date().toISOString()
+          ]
+        );
+      }
+      console.log(`✅ Seeded ${SEED_USERS.length} default accounts into MySQL users table`);
+    }
+  } catch (err) {
+    console.error('⚠️ MySQL seeding error:', err.message);
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   }
 }
 
@@ -325,8 +409,17 @@ export async function connectDB() {
     // 3. Create tables if not exist
     await createTables();
 
+<<<<<<< HEAD
     // Optional: Initial stats reset (disabled to preserve production play metrics and user ratings)
     // await query('UPDATE games SET plays = 0, likes = 0, dislikes = 0').catch(() => {});
+=======
+    // 4. Seed initial database data
+    await seedDatabase();
+
+    // Reset plays, likes, dislikes initially as requested in project logic
+    await query('UPDATE games SET plays = 0, likes = 0, dislikes = 0').catch(() => {});
+    console.log('✅ Successfully reset all game plays, likes, and dislikes to 0 in MySQL');
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   } catch (err) {
     isConnected = false;
     console.error(`❌ MySQL connection failed (${err.message}). Ensure MySQL service is active.`);

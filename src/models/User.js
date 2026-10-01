@@ -99,7 +99,11 @@ export const User = {
       user.avatar || '',
       user.provider || 'email',
       user.passkeyCredentialId || null,
+<<<<<<< HEAD
       user.role || 'user',
+=======
+      user.role || 'moderator',
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       user.status || 'active',
       cloudSaveVal,
       user.lastLogin || new Date().toISOString(),
@@ -117,6 +121,7 @@ export const User = {
     const data = update.$set || update;
     const setClauses = [];
     const params = [];
+<<<<<<< HEAD
     const allowedColumns = new Set([
       'username', 'name', 'email', 'password', 'avatar',
       'provider', 'passkeyCredentialId', 'role', 'status',
@@ -125,6 +130,11 @@ export const User = {
 
     for (const [key, val] of Object.entries(data)) {
       if (key !== 'id' && key !== '_id' && key !== '__v' && allowedColumns.has(key)) {
+=======
+
+    for (const [key, val] of Object.entries(data)) {
+      if (key !== 'id') {
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
         setClauses.push(`\`${key}\` = ?`);
         params.push(typeof val === 'object' && val !== null ? JSON.stringify(val) : val);
       }

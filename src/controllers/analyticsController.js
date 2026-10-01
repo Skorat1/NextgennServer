@@ -59,6 +59,7 @@ export async function getLiveAnalytics(req, res) {
     }
 
     // Telemetry Collection
+<<<<<<< HEAD
     let cpuPct = 12;
     const loadAvg = os.loadavg()[0];
     if (loadAvg > 0) {
@@ -77,6 +78,10 @@ export async function getLiveAnalytics(req, res) {
         cpuPct = Math.min(100, Math.max(2, Math.round(usage * 100)));
       }
     }
+=======
+    const cpuLoad = os.loadavg()[0]; // 1 minute load average
+    const cpuPct = Math.min(100, Math.max(1, Math.round(cpuLoad * 10)));
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     const memoryMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
     const latency = Math.floor(Math.random() * 20) + 10; // Simulated latency 10-30ms
     const activeDbConn = isMySQLConnected() ? 1 : 0;

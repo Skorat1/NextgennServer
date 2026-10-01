@@ -11,12 +11,18 @@ export function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Authentication token required' });
   }
 
+<<<<<<< HEAD
   if (token.startsWith('local_admin_token_') && process.env.NODE_ENV !== 'production') {
     const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1' || req.hostname === 'localhost' || req.hostname === '127.0.0.1';
     if (isLocal) {
       req.user = { id: 'usr-admin-1', username: 'SuperAdmin', role: 'admin' };
       return next();
     }
+=======
+  if (token.startsWith('local_admin_token_')) {
+    req.user = { id: 'usr-admin-1', username: 'SuperAdmin', role: 'admin' };
+    return next();
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   }
 
   const decoded = verifyToken(token);
@@ -39,6 +45,7 @@ export function requireAdminAuth(req, res, next) {
     return res.status(401).json({ error: 'Admin authorization token required. Please sign in.' });
   }
 
+<<<<<<< HEAD
   if (token.startsWith('local_admin_token_') && process.env.NODE_ENV !== 'production') {
     const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1' || req.hostname === 'localhost' || req.hostname === '127.0.0.1';
     if (isLocal) {
@@ -46,6 +53,12 @@ export function requireAdminAuth(req, res, next) {
       req.user = req.admin;
       return next();
     }
+=======
+  if (token.startsWith('local_admin_token_')) {
+    req.admin = { id: 'usr-admin-1', username: 'SuperAdmin', role: 'admin' };
+    req.user = req.admin;
+    return next();
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   }
 
   const decoded = verifyToken(token);
@@ -61,6 +74,7 @@ export function requireAdminAuth(req, res, next) {
   req.user = decoded;
   next();
 }
+<<<<<<< HEAD
 
 /**
  * Middleware: Requires the authenticated user to be the owner of the resource OR an administrator/moderator
@@ -99,3 +113,5 @@ export function requireSelfOrAdmin(req, res, next) {
 
   next();
 }
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620

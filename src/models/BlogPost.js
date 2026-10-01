@@ -36,11 +36,17 @@ function formatPost(row) {
   };
 }
 
+<<<<<<< HEAD
 let tableEnsured = false;
 
 export const BlogPost = {
   async ensureTable() {
     if (!isMySQLConnected() || tableEnsured) return;
+=======
+export const BlogPost = {
+  async ensureTable() {
+    if (!isMySQLConnected()) return;
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS blog_posts (
@@ -72,7 +78,10 @@ export const BlogPost = {
       try { await query('ALTER TABLE blog_posts ADD COLUMN gameUrl VARCHAR(500) DEFAULT ""'); } catch {}
       try { await query('ALTER TABLE blog_posts ADD COLUMN gameTitle VARCHAR(255) DEFAULT ""'); } catch {}
       try { await query('ALTER TABLE blog_posts ADD COLUMN emoji VARCHAR(10) DEFAULT "🎮"'); } catch {}
+<<<<<<< HEAD
       tableEnsured = true;
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     } catch (err) {
       console.warn('BlogPost.ensureTable warning:', err.message);
     }

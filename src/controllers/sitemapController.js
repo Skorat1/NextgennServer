@@ -467,6 +467,7 @@ export function generateRobotsTxt(req, res) {
   const robots = `# NextGenn Search Engine Crawler Policy
 User-agent: *
 Allow: /
+<<<<<<< HEAD
 Disallow: /admin
 Disallow: /admin/
 Disallow: /admin/*
@@ -474,6 +475,10 @@ Disallow: /api/
 Disallow: /api/admin
 Disallow: /api/admin/
 Disallow: /api/admin/*
+=======
+Disallow: /admin/
+Disallow: /api/
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 Disallow: /uploads/temp/
 
 # Crawl-delay for optimal server performance

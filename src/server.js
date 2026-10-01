@@ -1,6 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+<<<<<<< HEAD
+=======
+import http from 'http';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB, getPool } from './config/db.js';
@@ -23,6 +27,7 @@ import { handleGamePrerender } from './middleware/crawlerPrerender.js';
 // Load environment variables
 dotenv.config();
 
+<<<<<<< HEAD
 // Silence standard console logs in production (keeps console.error for critical server issues)
 if (process.env.NODE_ENV === 'production') {
   console.log = () => {};
@@ -32,6 +37,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const app = express();
+=======
+const app = express();
+const httpServer = http.createServer(app);
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 
 const PORT = process.env.PORT || 5000;
 
@@ -66,12 +75,15 @@ app.get('/', (req, res) => {
 // Game Embed Proxy
 app.use('/game-proxy', proxyRoutes);
 
+<<<<<<< HEAD
 // Block search engine indexing and crawlers for all admin endpoints
 app.use(['/admin', '/api/admin'], (req, res, next) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
   next();
 });
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 // Main API Endpoints with Rate Limiting
 app.use('/api', apiLimiter, apiRoutes);
 
@@ -89,6 +101,7 @@ const startServer = async () => {
     console.error('⚠️ Database initialization warning:', err.message);
   }
 
+<<<<<<< HEAD
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 NextGenn Backend Engine running at http://localhost:${PORT}`);
   });
@@ -103,6 +116,12 @@ const startServer = async () => {
     }
   });
 
+=======
+  const server = httpServer.listen(PORT, () => {
+    console.log(`🚀 NextGenn Backend Engine running at http://localhost:${PORT}`);
+  });
+
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   // Graceful Shutdown Handlers
   const gracefulShutdown = (signal) => {
     console.log(`\n🛑 Received ${signal}. Gracefully shutting down...`);

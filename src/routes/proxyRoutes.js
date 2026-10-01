@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
+<<<<<<< HEAD
 function isSafeProxyUrl(urlStr) {
   try {
     const parsed = new URL(urlStr);
@@ -29,6 +30,8 @@ function isSafeProxyUrl(urlStr) {
   }
 }
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
 // --- GAME EMBED PROXY (CORS / CSP Bypass for XML & Google Gadget iframes) ---
 router.get(['/*', ''], async (req, res, next) => {
   let targetUrl = req.query.url;
@@ -46,10 +49,13 @@ router.get(['/*', ''], async (req, res, next) => {
     return next();
   }
 
+<<<<<<< HEAD
   if (!isSafeProxyUrl(targetUrl)) {
     return res.status(403).json({ error: 'Access denied: Invalid or disallowed proxy destination.' });
   }
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   try {
     const response = await fetch(targetUrl, {
       headers: {
@@ -59,7 +65,10 @@ router.get(['/*', ''], async (req, res, next) => {
     });
 
     const contentType = response.headers.get('content-type') || 'text/html';
+<<<<<<< HEAD
     res.status(response.status);
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     res.setHeader('Content-Type', contentType);
     res.removeHeader('X-Frame-Options');
     res.removeHeader('Content-Security-Policy');

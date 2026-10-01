@@ -15,6 +15,7 @@ function formatGame(row) {
     }
   }
 
+<<<<<<< HEAD
   let relatedGames = [];
   if (row.relatedGames) {
     if (Array.isArray(row.relatedGames)) {
@@ -52,6 +53,11 @@ function formatGame(row) {
     developer: row.developer || '',
     releaseDate: row.releaseDate || row.createdAt || '',
     lastUpdate: row.lastUpdate || row.updatedAt || row.createdAt || '',
+=======
+  return {
+    ...row,
+    tags,
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     rating: typeof row.rating === 'number' ? row.rating : Number(row.rating || 4.8),
     likes: Number(row.likes || 0),
     dislikes: Number(row.dislikes || 0),
@@ -79,8 +85,13 @@ export const Game = {
       sql += ' AND status = ?';
       params.push(filter.status);
     } else {
+<<<<<<< HEAD
       // Default for public website: return active games (or fallback to non-maintenance titles)
       sql += " AND (status = 'active' OR status IS NULL OR status = '' OR status = 'published') AND status != 'maintenance'";
+=======
+      // Default for public website: ONLY return active games (hide draft and maintenance)
+      sql += " AND status = 'active'";
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
     }
 
     if (filter.category && filter.category !== 'all') {
@@ -93,7 +104,11 @@ export const Game = {
     }
 
     if (filter.search) {
+<<<<<<< HEAD
       sql += ' AND (LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(CAST(tags AS CHAR)) LIKE ?)';
+=======
+      sql += ' AND (LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(tags) LIKE ?)';
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       const term = `%${String(filter.search).toLowerCase()}%`;
       params.push(term, term, term);
     }
@@ -113,11 +128,14 @@ export const Game = {
     return await query("UPDATE games SET status = 'draft'");
   },
 
+<<<<<<< HEAD
   async setAllActive() {
     if (!isMySQLConnected()) return { affectedRows: 0 };
     return await query("UPDATE games SET status = 'active'");
   },
 
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   async findOne(filter = {}) {
     if (!isMySQLConnected()) return null;
 
@@ -166,11 +184,17 @@ export const Game = {
     }
 
     const tagsJson = JSON.stringify(Array.isArray(game.tags) ? game.tags : []);
+<<<<<<< HEAD
     const relatedGamesJson = JSON.stringify(Array.isArray(game.relatedGames) ? game.relatedGames : []);
     const screenshotsJson = JSON.stringify(Array.isArray(game.screenshots) ? game.screenshots : []);
     const sql = `
       INSERT INTO games (id, title, category, description, thumbnail, banner, previewVideo, gameUrl, tags, rating, likes, dislikes, plays, featured, tileSize, status, instructions, engine, platform, orientation, developer, releaseDate, lastUpdate, relatedGames, screenshots, width, height, createdAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+=======
+    const sql = `
+      INSERT INTO games (id, title, category, description, thumbnail, banner, previewVideo, gameUrl, tags, rating, likes, dislikes, plays, featured, tileSize, status, instructions, width, height, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       ON DUPLICATE KEY UPDATE
         title = VALUES(title),
         category = VALUES(category),
@@ -188,6 +212,7 @@ export const Game = {
         tileSize = VALUES(tileSize),
         status = VALUES(status),
         instructions = VALUES(instructions),
+<<<<<<< HEAD
         engine = VALUES(engine),
         platform = VALUES(platform),
         orientation = VALUES(orientation),
@@ -196,6 +221,8 @@ export const Game = {
         lastUpdate = VALUES(lastUpdate),
         relatedGames = VALUES(relatedGames),
         screenshots = VALUES(screenshots),
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
         width = VALUES(width),
         height = VALUES(height)
     `;
@@ -218,6 +245,7 @@ export const Game = {
       game.tileSize || '1x1',
       game.status || 'active',
       game.instructions || '',
+<<<<<<< HEAD
       game.engine || 'HTML5',
       game.platform || 'Browser (Desktop, Mobile)',
       game.orientation || 'Landscape',
@@ -226,6 +254,8 @@ export const Game = {
       game.lastUpdate || '',
       relatedGamesJson,
       screenshotsJson,
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       Number(game.width) || 800,
       Number(game.height) || 600,
       game.createdAt || new Date().toISOString().split('T')[0]
@@ -256,6 +286,7 @@ export const Game = {
       }
     }
 
+<<<<<<< HEAD
     const allowedColumns = new Set([
       'title', 'category', 'description', 'thumbnail', 'banner',
       'previewVideo', 'gameUrl', 'tags', 'rating', 'likes', 'dislikes',
@@ -275,6 +306,13 @@ export const Game = {
       } else if (key === 'screenshots') {
         setClauses.push('`screenshots` = ?');
         params.push(JSON.stringify(Array.isArray(val) ? val : []));
+=======
+    for (const [key, val] of Object.entries(updateFields)) {
+      if (key === 'id') continue;
+      if (key === 'tags') {
+        setClauses.push('`tags` = ?');
+        params.push(JSON.stringify(Array.isArray(val) ? val : []));
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
       } else if (key === 'featured') {
         setClauses.push('`featured` = ?');
         params.push(val ? 1 : 0);
@@ -331,6 +369,7 @@ export const Game = {
     if (setClauses.length > 0) {
       await query(`UPDATE games SET ${setClauses.join(', ')}`, params);
     }
+<<<<<<< HEAD
   },
 
   async setAllDraft() {
@@ -341,5 +380,7 @@ export const Game = {
   async setAllActive() {
     if (!isMySQLConnected()) return { affectedRows: 0 };
     return await query("UPDATE games SET status = 'active'");
+=======
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   }
 };

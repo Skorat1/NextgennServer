@@ -7,7 +7,11 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+<<<<<<< HEAD
     "build": "node --check src/server.js"
+=======
+    "build": "echo Backend build complete"
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -16,4 +20,8 @@
     "express-rate-limit": "^8.7.0",
     "mysql": "^2.18.1"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> cc496e0f4ea914ad0aa57f7457ceb715fe8db620
